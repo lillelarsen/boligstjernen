@@ -1,0 +1,107 @@
+<% include ./partials/head.ejs %>
+<% include ./partials/header.ejs %>
+<% include ./partials/navigation.ejs %>
+<main class="main">
+        <h1 class="main-title"><%= title %></h1>
+        <span id="success" class="success-message">
+            <%= (messages && messages.success) ? messages.success : "" %>
+        </span>
+    <form method="post" class="edit-product">
+            <fieldset>
+                    <% include ./partials/image-picker.ejs %>
+            </fieldset>
+            <fieldset>
+                <label for="title">Titel</label>
+                <input type="text" name="title" id="title" value="<%= product.title %>">
+                <span id="titleError" style="color: red;">
+                    <%= (messages && messages.titleError) ? messages.titleError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="description">Beskrivelse</label>
+                <textarea name="description" id="description"><%= product.description %></textarea>
+                <span id="descriptionError" style="color: red;">
+                    <%= (messages && messages.descriptionError) ? messages.descriptionError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="caseNumber">Sagsnr.</label>
+                <input type="number" name="caseNumber" id="caseNumber" value="<%= product.case_number %>">
+                <span id="caseNumberError" style="color: red;">
+                    <%= (messages && messages.caseNumberError) ? messages.caseNumberError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="price">Pris</label>
+                <input type="number" name="price" id="price" value="<%= product.price %>">
+                <span id="priceError" style="color: red;">
+                    <%= (messages && messages.priceError) ? messages.priceError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="rentGross">Husleje (Brutto)</label>
+                <input type="number" name="rentGross" id="rentGross" value="<%= product.rent_gross %>">DKK
+                <span id="rentGrossError" style="color: red;">
+                    <%= (messages && messages.rentGrossError) ? messages.rentGrossError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="rentNet">Husleje (Netto)</label>
+                <input type="number" name="rentNet" id="rentNet" value="<%= product.rent_net %>">DKK
+                <span id="rentNetError" style="color: red;">
+                    <%= (messages && messages.rentNetError) ? messages.rentNetError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="residentialSize">Bolig m2</label>
+                <input type="number" name="residentialSize" id="residentialSize" value="<%= product.residential_size %>" >
+                <span id="residentialSizeError" style="color: red;">
+                    <%= (messages && messages.residentialSizeError) ? messages.residentialSizeError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="groundArea">Grundareal m2</label>
+                <input type="number" name="groundArea" id="groundArea" value="<%= product.ground_area %>">
+                <span id="groundAreaError" style="color: red;">
+                    <%= (messages && messages.groundAreaError) ? messages.groundAreaError : "" %>
+                </span>
+            </fieldset>
+            <fieldset>
+                <label for="category">category</label>
+                <select name="category" id="category">
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category.id %>" <%= product.categoryId == category.id ? "selected" : "" %>><%= category.name %></option>
+                    <% }) %>
+                </select>
+            </fieldset>
+        <button type="submit">Gem</button>
+    </form>
+    <h2>Vælg primært billede/Fjern fra bolig</h2>
+    <form class="image-form" action="/setPrimaryImage" method="POST">
+        <% selected.forEach(select => { %>
+            <a href="/setPrimaryImage/<%= select.id %>"><img class="image-standard" src="/images/uploads/120x90-<%= select.name %>" data-id="<%= select.standard_img %>" alt=""></a>
+            <a href="/residentialImageRemove/<%= select.id %>">Fjern billede fra bolig</a>
+        <% }) %>
+    </form>
+</main>
+<script>
+    const imageStandards = document.querySelectorAll('.image-standard');
+    imageStandards.forEach(img => {
+        if (img.dataset.id == 1) {
+            img.style.border = 'solid black 2px';
+        }
+    })
+</script>
+<script src="/scripts/validator.js"></script>
+<script>
+    jsb.validationEmpty('.edit-product', '#title', 'Udfyld venligst titel!', '#titleError');
+    jsb.validationEmpty('.edit-product', '#caseNumber', 'Udfyld venligst varenummer!', '#caseNumberError');
+    jsb.validationEmpty('.edit-product', '#description', 'Udfyld venligst beskrivelse!', '#descriptionError');
+    jsb.validationEmpty('.edit-product', '#price', 'Udfyld venligst pris!', '#priceError');
+    jsb.validationEmpty('.edit-product', '#rentGross', 'Udfyld venligst husleje brutto!', '#rentGrossError');
+    jsb.validationEmpty('.edit-product', '#rentNet', 'Udfyld venligst husleje netto!', '#rentNetError');
+    jsb.validationEmpty('.edit-product', '#residentialSize', 'Udfyld venligst Boligstørrelse!', '#residentialSizeError');
+    jsb.validationEmpty('.edit-product', '#groundArea', 'Udfyld venligst Grundareal!', '#groundAreaError');
+</script>
+<% include ./partials/footer.ejs %>
+<% include ./partials/after-footer.ejs %>

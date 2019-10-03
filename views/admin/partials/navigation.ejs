@@ -1,0 +1,37 @@
+<nav class="navigation">
+    <ul>
+        <li>
+            <a class="admin-link-text" href="/admin">Forside</a>
+        </li>
+        <hr>
+        <li>
+            <a class="admin-link-text" href="/admin/users">Brugere</a>
+        </li>
+        <li>
+            <a class="admin-link-text" href="/admin/roles">Roller</a>
+        </li>
+        <hr>
+        <li>
+            <a class="admin-link-text" href="/admin/residentials">Boliger</a>
+        </li>
+        <li>
+            <a class="admin-link-text" href="/admin/articles">Nyheder</a>
+        </li>
+        <li>
+            <a class="admin-link-text" href="/admin/messages">Kommentarer</a>
+        </li>
+        <hr>
+        <li>
+            <a class="admin-link-text" href="/admin/categories">Boligtyper</a>
+        </li>
+        <hr>
+        <li>
+            <a class="admin-link-text" href="/admin/images">Media</a>
+        </li>
+
+        <hr>
+        <li>
+            <%- isLoggedIn ? "<a href='/logout'>Log ud</a>" : "<a href='/login'>Log ind</a>" %>
+        </li>
+    </ul>
+</nav>

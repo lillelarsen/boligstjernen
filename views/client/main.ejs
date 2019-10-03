@@ -1,0 +1,29 @@
+<% include ./partials/head.ejs %>
+<% include ./partials/header.ejs %>
+<% include ./partials/navigation.ejs %>
+    <main class="main front">
+        <div class="search-residentials">
+            <h1 class="front-main-text"><%= site.sitedescription %></h1>
+            <form class="front-main-form" action="/boliger" method="get">
+                <input class="front-main-input" type="text" name="caseNumber" placeholder="sagsnr.">
+                <select class="front-main-input" name="category" id="category">
+                        <option value="">Type</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category.id %>"><%= category.name %></option>
+                    <% }) %>
+                </select>
+                <button class="front-main-button" type="submit"><img class="front-main-button-logo" src="images/site-content/search-button.png" alt="søgeknap"> </button>
+            </form>
+        </div>
+    </main>
+<% include ./partials/aside.ejs %>  
+<script>
+    const wrapper = document.querySelector('#wrapper');
+    const aside = document.querySelector('aside');
+    wrapper.style.backgroundImage = "url('images/site-content/<%= site.img_home%>')";
+    wrapper.style.backgroundSize = 'cover';
+    wrapper.style.backgroundRepeat = 'no-repeat';
+    aside.style.backgroundColor = 'rgba(255,255,255,0.7';
+</script>
+<% include ./partials/footer.ejs %>
+<% include ./partials/after-footer.ejs %>

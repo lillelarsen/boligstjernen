@@ -1,0 +1,106 @@
+body, * {
+    margin: 0;
+    padding: 0;
+    font-family: var(--primary-fontfamily);
+    font-size: 1em;
+}
+
+/* Layout */
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/images/site-content/stjerne-baggrund.png');
+    background-size: cover;
+    overflow: hidden;
+}
+
+.header {
+    min-height: 15vh;
+    width: 97vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background-color);
+}
+
+.navigation {
+    background-color: var(--primary-color);
+    min-height: 5vh;
+    width: 97vw;
+    text-align: center;
+}
+
+.main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 97vw;
+    min-height: 70vh;
+}
+.front {
+    display: flex;
+    justify-content: center;
+}
+
+.aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 97vw;
+    min-height: 20vh; 
+}
+
+.search {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (min-width: 1000px) { 
+    #wrapper {
+        display: grid;
+        grid-template-columns: 4fr 1fr;
+        grid-template-rows: 15vh 5vh minmax(80vh, auto);
+    }
+    .header {
+        grid-column: 1/-1;
+        grid-row: 1/2;
+        width: 100%;
+        justify-content: start;
+    }
+    .navigation {
+        grid-column: 1/-1;
+        grid-row: 2/3;
+        width: 100%;
+        height: 4vh;
+    }
+    .main {
+        grid-column: 1/2;
+        grid-row: 3/4;
+        width: 95%;
+        justify-self: center;
+        min-height: 80%; 
+    }
+    .contact {
+        justify-content: start;
+    }
+    .news {
+        grid-column: 1/-1;
+        width: 85%;
+        justify-self: center;
+    }
+
+    .search {
+        padding-top: 4em;
+        justify-content: center;
+        align-items: flex-start;
+    }
+    .aside {
+        grid-column: 2/3;
+        grid-row: 3/4;
+        width: 100%;
+        min-height: 100%;
+    }
+}

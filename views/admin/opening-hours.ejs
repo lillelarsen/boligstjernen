@@ -1,0 +1,58 @@
+<% include ./partials/head.ejs %>
+<% include ./partials/header.ejs %>
+<% include ./partials/navigation.ejs %>
+<main class="main">
+        <h1 class="main-title"><%= title %></h1>
+        <h2>Åbningstider</h2>
+        <span id="emailError" style="color: red;">
+            <%= (messages && messages.opensError) ? messages.opensError : "" %>
+            <%= (messages && messages.closingError) ? messages.closingError : "" %>
+        </span>
+        <% openingHours.forEach(openingHour => { %>
+            <form action="" method="post" >
+                <p><%= openingHour.weekday %></p>
+                <label for="opens">Åbner:</label>
+                <input type="time" name="opens" id="opens" value="<%= openingHour.opens %>">
+                <label for="closing">Lukker:</label>
+                <input type="time" name="closing" id="closing" value="<%= openingHour.closing %>">
+                <label for="closed">Lukket:</label>
+                <input type="checkbox" name="closed" id="closed" value="1" <%= openingHour.closed === 1 ? "checked" : "" %>>
+                <input type="hidden" name="id" value="<%= openingHour.id %>">
+                <button type="submit">Gem</button>
+            </form>
+        <% }) %>
+    <a href="/admin">Tilbage til indstillinger</a>
+</main>
+<script src="/scripts/validator.js"></script>
+<script>
+    jsb.validationEmpty('.edit-globals', '#sitename', 'Udfyld venligst titel!', '#sitenameError');
+    jsb.validationEmpty('.edit-globals', '#sitedescription', 'Udfyld venligst beskrivelse!', '#sitedescriptionError');
+    jsb.validationEmpty('.edit-globals', '#street', 'Udfyld venligst vej!', '#streetError');
+    jsb.validationEmpty('.edit-globals', '#streetNumber', 'Udfyld venligst nummer!', '#streetNumberError');
+    jsb.validationEmpty('.edit-globals', '#postalCode', 'Udfyld venligst postnummer!', '#postalCodeError');
+    jsb.validationEmpty('.edit-globals', '#city', 'Udfyld venligst by!', '#cityError');
+    jsb.validationEmpty('.edit-globals', '#phone', 'Udfyld venligst telefon!', '#phoneError');
+    jsb.validationEmpty('.edit-globals', '#telefax', 'Udfyld venligst telefax!', '#telefaxError');
+    jsb.validationEmpty('.edit-globals', '#email', 'Udfyld venligst email!', '#emailError');
+</script>
+<script>
+    const mainImageInput = document.querySelector('.mainimageChange');
+    mainImageInput.addEventListener('change', function (event) {
+        const formData = new FormData();
+        formData.append('photo', this.files[0]);    
+        formData.append('prevImg', this.dataset.currentImage);
+        
+        fetch('/admin/mainimage', {
+            method: 'PATCH',
+            body: formData
+        })
+            .then(response => {
+                if (response.status === 200) return response.json();
+            })
+            .then(data => {
+                window.location.href = "/admin";
+            });
+    });
+</script>
+<% include ./partials/footer.ejs %>
+<% include ./partials/after-footer.ejs %>

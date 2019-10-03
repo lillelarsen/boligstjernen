@@ -1,0 +1,243 @@
+/* Standards */
+fieldset {
+    border: none;
+    text-align: right;
+    margin-bottom: 1em;
+}
+textarea {
+    width: 13.5em;
+}
+button, .btn {
+    margin-left: auto;
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.2em 1.2em;
+    color: var(--white-color);
+}
+.btn {
+    margin-left: 1em;
+    text-decoration: none;
+}
+/* Header */
+.site-logo {
+    height: 18vh;
+    width: auto;
+}
+
+.site-title{
+    font-size: 10vw;
+    text-decoration: none;
+    color: var(--white-color);
+}
+/* Navigation */
+.navigation-link {
+    color: var(--white-color);
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.5em;
+}
+.activeLink {
+    background-color: var(--white-color);
+    color: var(--primary-color);
+}
+/* Front */
+.front-main-text {
+    font-size: 1.5em;
+    font-weight: 400;
+}
+
+.front-main-input {
+    width: 20vw;
+    min-width: 6em;
+    padding: 0.7em;
+    background-color: rgba(255,255,255,0.1);
+    border: solid 0 var(--black-color);
+}
+
+.front-main-input::placeholder {
+    color: var(--black-color);
+}
+
+.front-main-button,
+.front-main-button-logo {
+    height: 1.8em;
+    padding: 0 0.5em;
+    cursor: pointer;
+    background-color: rgba(255,255,255,0.1);
+    border: rgba(255,255,255,0.1) solid 0px;
+
+}
+/* Random product */
+.random-product-description {
+    font-weight: 700;
+    margin-bottom: 1em;
+}
+.random-product-head,
+.random-product-value {
+    width: 48%;
+    margin-bottom: 0.3em;
+}
+.random-product-head:last-of-type ,
+.random-product-value:last-of-type {
+    margin-top: 0.7em;
+}
+.random-product-value {
+    text-align: right;
+}
+.random-product-read {
+    width: 100%;
+    text-align: right;
+    color: var(--black-color);
+}
+/* Article */
+.article-date {
+    font-weight: 700;
+}
+/* contact */
+.contact-head {
+    margin: 1em auto;
+}
+
+.contact-info-field:last-of-type {
+    margin-bottom: 2em;
+}
+.hours {
+    display: inline-block;
+    width: 50%;
+    text-align: right;
+}
+.required:after { 
+    content:" *";
+    color: red; 
+}
+
+.errorMessage {
+    display: inline-block;
+}
+/* Aside */
+.aside-image {
+    width: 250px;
+    height: auto;
+}
+/* Search fields */
+.search-fieldset {
+    text-align: left;
+}
+
+.search-case-number-header,
+.search-category-header,
+.search-residential-size-header,
+.search-ground-area-header,
+.search-price-header,
+.search-rent-gross-header,
+.search-rent-net-header {
+    display: inline-block;
+    width: 13em;
+}
+
+.residential-size-input,
+.ground-area-input,
+.price-input,
+.rent-gross-input,
+.rent-net-input {
+    width: 5.5em;
+}
+/* Pagination */
+.paginationBtn {
+    display: inline-block;
+    padding: 0.3em 1em;
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    color: var(--white-color);
+}
+
+.itemsPerPage {
+    width: 4em;
+    margin-bottom: 0.1em;
+}
+.active {
+    background-color: var(--white-color);
+}
+
+.paginationBtn:last-child {
+    border-radius: 0 5px 5px 0;
+    -webkit-border-radius: 0 5px 5px 0;
+    -moz-border-radius: 0 5px 5px 0;
+    -ms-border-radius: 0 5px 5px 0;
+    -o-border-radius: 0 5px 5px 0;
+}
+
+.paginationBtn:first-child {
+    border-radius: 5px 0 0 5px;
+    -webkit-border-radius: 5px 0 0 5px;
+    -moz-border-radius: 5px 0 0 5px;
+    -ms-border-radius: 5px 0 0 5px;
+    -o-border-radius: 5px 0 0 5px;
+}
+
+.disabled { 
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+/* Search - product-list */
+.search-product-image {
+    width: 300px;
+    height: auto;
+    grid-row: 1/4;
+}
+.search-product-name {
+    grid-column: 2/3;
+    grid-row: 1/2;
+}
+.search-product-description {
+    grid-column: 2/3;
+    grid-row: 2/3;
+}
+.search-product-link {
+    grid-column: 2/3;
+    grid-row: 3/4;
+}
+/* Single product view */
+.product-view-name {
+    grid-row: 1/2;
+}
+.product-view-description {
+    grid-row: 3/4;
+}
+.product-image {
+    width: 400px;
+    height: auto;
+}
+.slide-image {
+    cursor: pointer;
+    width: 120px;
+    height: 90px;
+}
+.spec-info {
+    font-weight: 600;
+}
+.spec {
+    font-weight: 500;
+}
+@media only screen and (min-width: 1000px) { 
+    .site-title{
+        font-size: 4em;
+        padding-left: 0.3em;
+    }
+    .front-main-input {
+        width: 8em;
+    }
+    .product-view-name {
+        grid-column: 2/3;
+        grid-row: 1/2;
+    }
+    .product-view-description {
+        grid-column: 2/3;
+        grid-row: 2/4;
+    }
+    .product-image {
+        width: 400px;
+        height: 300px;
+    }
+}

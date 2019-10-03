@@ -1,0 +1,51 @@
+<div class="choosen-image">
+    <a href="" class="btn imagePopUp">Mediabibliotek</a>
+    
+</div>
+
+<div class="image-picker">
+    <a class="closePicker btn">X</a>
+    <% if(images.length == 0) { %>
+        <p>Ingen billeder i systemet, <a href="/admin/images">upload billeder til systemet</a></p>
+    <% } %>
+        <div class="show-images">
+            <% images.forEach(image => { %>
+                <% if(image.fk_residential === product.productId) {  %>
+                    <div class="used-image-container">
+                        <img class="used-image" src="/images/uploads/<%= image.name %>" alt="">
+                        <p class="used-image-text">Tilhører andet produkt</p>
+                    </div>
+                <% } else { %>
+                <div class="available-image-container">
+                    <label class="image-pick" for="<%= image.id %>">
+                        <img class="available-image" src="/images/uploads/<%= image.name %>" alt="">
+                        <input class="imageCheckers available-image-input" type="checkbox" name="chooseImage" id="<%= image.id %>" value="<%= image.id %>" data-imgname="<%= image.name %>">
+                    </label>
+                </div>
+                <% } %>
+            <% }); %>
+        </div>
+        <a class="closePicker btn">Vælg billeder</a>
+</div>
+
+<script>
+    const imageListOf = document.querySelector('.image-picker');
+
+    const imagesDiv = document.querySelectorAll('.imageCheckers');
+    const showImages = document.querySelector('.choosen-image');
+    const imagePopUp = document.querySelector('.imagePopUp');
+
+    imagePopUp.addEventListener('click', (e) => {
+        e.preventDefault();
+        imageListOf.classList.add('show');        
+    });      
+
+    const close = document.querySelectorAll('.closePicker');
+    close.forEach(element => {
+        element.addEventListener('click', (e) => {
+            e.preventDefault();
+            imageListOf.classList.remove('show');
+        })
+    });
+    
+</script>

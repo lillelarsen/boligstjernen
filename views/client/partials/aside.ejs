@@ -1,0 +1,20 @@
+<aside class="aside">
+    <section class="aside-section aside-product">
+    <% if(typeof randomResidential == "undefined") { %>
+        <p>Ingen boliger</p>
+    <% } else { %>
+        <img class="aside-image" src="/images/uploads/400x300-<%= randomResidential.image %>" alt="">
+
+        <p class="random-product-description"><%- randomResidential.title %></p>
+        <p class="random-product-head">Boligstørrelse:</p>
+        <span class="random-product-value"><%= randomResidential.residential_size %></span>
+        <p class="random-product-head">Grundareal:</p>
+        <span class="random-product-value"><%= randomResidential.ground_area %></span>
+        <p class="random-product-head">Pris:</p>
+        <span class="random-product-value"><%= randomResidential.price %></span>
+        <p class="random-product-head">Sagsnummer:</p>
+        <span class="random-product-value"><%= randomResidential.case_number %></span>
+        <a class="random-product-read" href="/bolig/<%= randomResidential.id %>">Læs mere</a>
+    <% } %>
+    </section>
+</aside>

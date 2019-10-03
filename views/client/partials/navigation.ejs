@@ -1,0 +1,24 @@
+    <nav class="navigation">
+        <ul class="navigation-list">
+            <li class="navigation-item">
+                <a class="navigation-link" href="/">Forside</a>
+            </li>
+            <li class="navigation-item">
+                <a class="navigation-link" href="/boliger?page=1&items=10">Find bolig</a>
+            </li>
+            <li class="navigation-item">
+                <a class="navigation-link" href="/nyheder">Nyheder</a>
+            </li>
+            <li class="navigation-item">
+                <a class="navigation-link" href="/kontakt">Kontakt</a>
+            </li>
+        </ul>
+    </nav>
+    <script>
+        var btns = document.getElementsByClassName('navigation-link');
+        for (var i = 0; i < btns.length; i++) {
+            if(btns[i].href.split('/').pop() == window.location.href.split('/').pop()) {
+                btns[i].classList.add('activeLink');
+            }
+        }
+    </script>

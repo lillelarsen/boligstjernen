@@ -1,0 +1,43 @@
+<% include ./partials/head.ejs %>
+<% include ./partials/header.ejs %>
+<% include ./partials/navigation.ejs %> 
+<main class="main">
+        <article class="product-view">
+                <div class="image-view">
+                        <div class="image-display">
+                                <img class="product-image" src="/images/uploads/400x300-<%= images[0].name %>" alt="">
+                        </div>
+                        <div class="image-slide">
+                                <% images.forEach((image) => { %>
+                                <img class="slide-image" src="/images/uploads/120x90-<%= image.name %>" alt="">
+                                <% }); %>
+                        </div>
+                </div>
+                <h2 class="product-view-name"><%= product.title %></h2>
+                <div class="product-view-description"><%- product.description %></div>
+                <div class="product-specs">
+                        <div class="spec-size">
+                                <p class="spec-info">Bolig m2<span class="spec"> <%= product.residential_size %></span></p>
+                                <p class="spec-info">Grund m2<span class="spec"> <%= product.ground_area %></span></p>
+                        </div>
+                        <div class="spec-price">
+                                <p class="spec-info">Pris DKK<span class="spec"> <%= product.price %></span></p>
+                                <p class="spec-info">Brutto<span class="spec"> <%= product.rent_gross %></span></p>
+                                <p class="spec-info">Netto<span class="spec"> <%= product.rent_net %></span></p>
+                        </div>
+                </div>
+        </article>
+</main>
+<script>
+const bigImg = document.querySelectorAll('.product-image')[0];
+const thumbnails = document.querySelectorAll('.slide-image');
+thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+                const thumb = thumbnail.src.split('-').pop();             
+                bigImg.src = `/images/uploads/400x300-${thumb}`;
+        })
+})
+</script>
+<% include ./partials/aside.ejs %>
+<% include ./partials/footer.ejs %>
+<% include ./partials/after-footer.ejs %>

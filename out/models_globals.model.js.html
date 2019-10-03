@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/globals.model.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/globals.model.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const db = require('../config/mysql');
+const fs = require('fs');
+
+const { join } = require('path');
+const uploadDir = '../public/images/site-content/';
+/**
+ * @module Model/globals
+ */
+
+/**
+ * Denne funktion viser data fra DB-tabellen globals
+ */
+exports.getGlobals = async function() {
+    try {
+        const globalSQL = `SELECT id, sitename, sitedescription, company_name, street, street_number, postal_code, city, phone, telefax, email, img_home FROM globals`;
+        return await db.query(globalSQL, {});
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+/**
+ * Denne funktion viser data fra DB-tabellen opening_hours
+ */
+exports.getHours = async function() {
+    try {
+        const hoursSQL = `SELECT id, weekday, opens, closing, closed FROM opening_hours`;
+        return await db.query(hoursSQL, {});
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+/**
+ * Denne funktion viser data fra DB-tabellen globals
+ * @param {Object} insertObject - Placeholder object for kolonnerne opens, closing, closed, id
+ */
+exports.updateHours = async function(insertObject) {
+    try {
+        const globalSQL = `UPDATE opening_hours SET opens = :opens, closing = :closing, closed = :closed
+        WHERE id = :id`;
+        return await db.query(globalSQL, insertObject);
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+/**
+ * Denne funktion viser data fra DB-tabellen globals
+ * @param {Object} insertObject - Placeholder object for kolonnerne sitename, sitedescription, company_name, street, street_number, postal_code, city, phone, telefax, email, id
+ */
+exports.updateGlobals = async function(insertObject) {
+    try {
+        const globalSQL = `UPDATE globals SET sitename = :name, sitedescription = :description, company_name = :companyName, street = :street, street_number = :street_number, postal_code = :postal_code,
+        city = :city, phone = :phone, telefax = :telefax, email= :email   
+        WHERE id = :id`;
+        return await db.query(globalSQL, insertObject);
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+/**
+ * Denne funktion opdatere data fra DB-tabellen globals
+ *  @param {Object} files - Placeholder object for req.files
+ *  @param {Object} fields - Placeholder object for req.fields
+ *  @param {Object} insertObject - Placeholder object for kolonnerne img_home, id
+ *  @param {String} newFileName - Placeholder for billedets navn
+ */
+exports.updateHomeImg = async function(files, fields, insertObject, newFileName) {
+    try {
+        const data = fs.readFileSync(files.photo.path);
+        const getnewFileName = newFileName;
+        fs.writeFileSync(join(__dirname, uploadDir + getnewFileName), data);
+        if(fields.prevImg) {
+            fs.unlinkSync(join(__dirname, uploadDir + fields.prevImg));
+        }
+        const globalSQL = `UPDATE globals SET img_home = :name WHERE id = :id`;
+        return await db.query(globalSQL, insertObject);
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+/**
+ * Denne funktion opdatere data fra DB-tabellen globals
+ *  @param {Object} fields - Placeholder object for req.fields
+ *  @param {Object} insertObject - Placeholder object for kolonnerne img_home, id
+ */
+exports.deleteHomeImg = async function(fields, insertObject) {
+    try {   
+        if(fields.prevImg) {
+            fs.unlinkSync(join(__dirname, uploadDir + fields.prevImg));
+        }
+        const globalSQL = `UPDATE globals SET img_home = :name WHERE id = :id`;
+        return await db.query(globalSQL, insertObject);
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controller_admin-articles.html">controller/admin-articles</a></li><li><a href="module-controller_admin-categories.html">controller/admin-categories</a></li><li><a href="module-controller_admin-contact.html">controller/admin-contact</a></li><li><a href="module-controller_admin-images.html">controller/admin-images</a></li><li><a href="module-controller_admin-main.html">controller/admin-main</a></li><li><a href="module-controller_admin-residentials.html">controller/admin-residentials</a></li><li><a href="module-controller_admin-roles.html">controller/admin-roles</a></li><li><a href="module-controller_site-articles.html">controller/site-articles</a></li><li><a href="module-controller_site-contact.html">controller/site-contact</a></li><li><a href="module-controller_site-home.html">controller/site-home</a></li><li><a href="module-controller_site-login.html">controller/site-login</a></li><li><a href="module-controller_site-residentials.html">controller/site-residentials</a></li><li><a href="module-controller_users.html">controller/users</a></li><li><a href="module-Helper_redirects.html">Helper/redirects</a></li><li><a href="module-Model_articles.html">Model/articles</a></li><li><a href="module-Model_categories.html">Model/categories</a></li><li><a href="module-Model_contact.html">Model/contact</a></li><li><a href="module-Model_globals.html">Model/globals</a></li><li><a href="module-Model_images.html">Model/images</a></li><li><a href="module-Model_profiles.html">Model/profiles</a></li><li><a href="module-Model_residentials.html">Model/residentials</a></li><li><a href="module-Model_roles.html">Model/roles</a></li><li><a href="module-Model_users.html">Model/users</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 26 2019 13:18:10 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

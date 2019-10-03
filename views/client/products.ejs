@@ -1,0 +1,92 @@
+<% include ./partials/head.ejs %>
+<% include ./partials/header.ejs %>
+<% include ./partials/navigation.ejs %> 
+<main class="main search">
+    <p><%= content %></p>
+        <form class="residential-search" method="get">
+                <fieldset class="search-fieldset">
+                        <label class="search-case-number-header" for="caseNumber">Sagsnummer: </label>
+                        <input type="text" name="caseNumber" id="caseNumber" value="<%= values.caseNumber %>">
+                    </fieldset>
+            <fieldset class="category-input search-fieldset">
+                            <label class="search-category-header">Boligtype:</label>
+                            
+                        <% categories.forEach(category => { %>
+                            <div class="category-checkbox">
+                                <input type="checkbox" name="category" value="<%= category.id %>" <%= values.category == category.id ? "checked" : "" %>>
+                                <label for="category"><%= category.name %></label>
+                            </div>
+                        <% }) %>
+            </fieldset>
+            <fieldset class="search-fieldset"> 
+                    <p class="search-residential-size-header">Boligstørrelse m2:</p>
+                    <label for="minResidentialSizeOutputId" id="minResidentialSizeOutputLabel">mindst</label>
+                    <input type="number" id="minResidentialSizeOutputId" min="1" name="minimumResidentialSize" class="residential-size-input" value="<%= values.minimumResidentialSize %>">
+                    <label for="maxResidentialSizeOutputId" id="maxResidentialSizeOutputLabel">højest</label>
+                    <input type="number" id="maxResidentialSizeOutputId" name="maximumResidentialSize" class="residential-size-input" value="<%= values.maximumResidentialSize %>">
+            </fieldset>
+            <fieldset class="search-fieldset">
+                    <p class="search-ground-area-header">Grundstørrelse m2:</p>
+                    <label for="minGroundAreaOutputId" id="minGroundAreaOutputLabel">mindst</label>
+                    <input type="number" id="minGroundAreaOutputId" min="1" name="minimumGroundArea" class="ground-area-input" value="<%= values.minimumGroundArea %>">
+                    <label for="maxGroundAreaOutputId" id="maxGroundAreaOutputLabel">højest</label>
+                    <input type="number" id="maxGroundAreaOutputId" name="maximumGroundArea" class="ground-area-input" value="<%= values.maximumGroundArea %>">
+            </fieldset>
+            <fieldset class="search-fieldset">
+                    <p class="search-price-header">Pris:</p>
+                    <label for="minPriceOutputId" id="minPriceOutputLabel">mindst</label>
+                    <input type="number" id="minPriceOutputId" min="0" max="99999999" name="minimumPrice" class="price-input" value="<%= values.minimumPrice %>">
+                    <label for="maxPriceOutputId" id="maxPriceOutputLabel">højest</label>
+                    <input type="number" id="maxPriceOutputId" name="maximumPrice" min="0" max="100000000" class="price-input" value="<%= values.maximumPrice %>">
+            </fieldset>
+            <fieldset class="search-fieldset">
+                    <p class="search-rent-gross-header">Husleje DKK (brutto):</p>
+                    <label for="minRentGrossOutputId" id="minRentGrossOutputLabel">mindst</label>
+                    <input type="number" id="minRentGrossOutputId" min="0" name="minimumRentGross" class="rent-gross-input" value="<%= values.minimumRentGross %>">
+                    <label for="maxRentGrossOutputId" id="maxRentGrossOutputLabel">højest</label>
+                    <input type="number" id="maxRentGrossOutputId" name="maximumRentGross" class="rent-gross-input" value="<%= values.maximumRentGross %>">
+            </fieldset>
+            <fieldset class="search-fieldset">
+                    <p class="search-rent-net-header">Husleje DKK (netto):</p>
+                    <label for="minRentNetOutputId" id="minRentNetOutputLabel">mindst</label>
+                    <input type="number" id="minRentNetOutputId" min="1" name="minimumRentNet" class="rent-net-input" value="<%= values.minimumRentNet %>">
+                    <label for="maxRentNetOutputId" id="maxRentNetOutputLabel">højest</label>
+                    <input type="number" id="maxRentNetOutputId" name="maximumRentNet" min="1" class="rent-net-input" value="<%= values.maximumRentNet %>">
+            </fieldset>
+            <input type="hidden" name="page" value="<%= page_number %>">
+            <input type="hidden" name="items" value="<%= itemsPerPage %>">
+            <div class="search-buttons">
+                <button type="submit">Søg</button>
+                <a href="/boliger" class="btn" >Nulstil</a>
+            </div>
+        </form>
+            <% if(products.length == 0) { %>
+                <p>Der er desværre ikke nogen emner der matcher dine kriterier. Vi anbefaler at du udvider din søgning og prøver igen.</p>
+            <% } %>
+            
+            <% include ./partials/pagination.ejs %>
+            <% products.forEach((product) => { %>
+                <article class="product">
+                    <img class="search-product-image" class="list-product-image" src="/images/uploads/400x300-<%= product.image %>" alt="">
+                    <h2 class="search-product-name"><%= product.title %></h2>
+                    <div class="search-product-description"><%- product.description %></div>
+                    <a class="search-product-link" href="/bolig/<%= product.id %>">Læs mere</a>
+                </article>
+            <% }); %>
+            <% include ./partials/pagination.ejs %>
+</main>
+
+<script>
+let products = document.querySelectorAll('.product');
+
+products.forEach(product => {
+    product.addEventListener('click', () => {
+        const link = product.querySelector('a').href;
+        window.location.href = link;
+    })
+
+})
+</script>
+<% include ./partials/aside.ejs %>
+<% include ./partials/footer.ejs %>
+<% include ./partials/after-footer.ejs %>

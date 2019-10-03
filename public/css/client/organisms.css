@@ -1,0 +1,53 @@
+.aside-section {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    justify-items: center;
+    width: 50%;
+}
+
+.search-residentials {
+    width: 96%;
+}
+
+.news {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 2em;
+}
+
+.contact-info,
+.contact-form-container {
+    width: 22em;
+}
+
+.contact-form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+.contact-form-container {
+    margin-top: 1em;
+}
+
+.residential-search {
+    margin: 4em 0;
+    text-align: start; 
+    width: 55%;
+}
+.choices {
+    display: flex;
+    flex-wrap: wrap;
+}
+@media only screen and (min-width: 1000px) {
+    .aside-section {     
+        width: 85%;
+        margin-top: 4em;
+    }
+
+    .search-residentials {
+        width: auto;
+    }
+}

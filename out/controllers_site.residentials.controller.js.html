@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/site.residentials.controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/site.residentials.controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { 
+    searchResidential, 
+    getOneResidential 
+} = require('../models/residentials.model');
+const { getCategories } = require('../models/categories.model');
+const { showImageByResidentialId } = require('../models/images.model');
+/**
+ * @module controller/site-residentials
+ */
+
+ /**
+ * Denne funktion retunerer products.ejs med data/søgeværdier
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.searchProducts = async function(req, res, next) {    
+    try {       
+        const result = await searchResidential(req.query);
+        const [categoryRows] = await getCategories();
+        
+        res.render('client/products', { 
+            'title': 'Søg bolig', 
+            'content': 'Her kan du søge i vores store boligoversigt. Du kan vælge at søge direkte på et sagsnummer, eller vælge at udfylde dine søgekriterier i formularen - måske har vi netop nu din drømmebolig til salg.', 
+            'products': result.rows,
+            'categories': categoryRows,
+            'total_pages': result.total_pages,
+            'current_page': result.current_page,
+            'itemsPerPage': result.limit,
+            'page_number': result.values.page,
+            'values': result.values,
+            'minimumprice': result.values.minimumprice,
+            'maximumprice': result.values.maximumprice,
+            'category': result.values.category,
+
+        });
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke finde resultater");
+    }
+}
+
+/**
+ * Denne funktion retunerer product.ejs med data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.showProduct = async function(req, res, next) {
+    try {
+        const [productRows] = await getOneResidential(req.params.id);
+        const [imageRows] = await showImageByResidentialId(req.params.id);
+        res.render('client/product', { 'title': 'Møbler', 'name': productRows[0].name, 'product': productRows[0], 'images': imageRows });
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke finde bruger");
+    }
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controller_admin-articles.html">controller/admin-articles</a></li><li><a href="module-controller_admin-categories.html">controller/admin-categories</a></li><li><a href="module-controller_admin-contact.html">controller/admin-contact</a></li><li><a href="module-controller_admin-images.html">controller/admin-images</a></li><li><a href="module-controller_admin-main.html">controller/admin-main</a></li><li><a href="module-controller_admin-residentials.html">controller/admin-residentials</a></li><li><a href="module-controller_admin-roles.html">controller/admin-roles</a></li><li><a href="module-controller_site-articles.html">controller/site-articles</a></li><li><a href="module-controller_site-contact.html">controller/site-contact</a></li><li><a href="module-controller_site-home.html">controller/site-home</a></li><li><a href="module-controller_site-login.html">controller/site-login</a></li><li><a href="module-controller_site-residentials.html">controller/site-residentials</a></li><li><a href="module-controller_users.html">controller/users</a></li><li><a href="module-Helper_redirects.html">Helper/redirects</a></li><li><a href="module-Model_articles.html">Model/articles</a></li><li><a href="module-Model_categories.html">Model/categories</a></li><li><a href="module-Model_contact.html">Model/contact</a></li><li><a href="module-Model_globals.html">Model/globals</a></li><li><a href="module-Model_images.html">Model/images</a></li><li><a href="module-Model_profiles.html">Model/profiles</a></li><li><a href="module-Model_residentials.html">Model/residentials</a></li><li><a href="module-Model_roles.html">Model/roles</a></li><li><a href="module-Model_users.html">Model/users</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 26 2019 13:18:10 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/admin.categories.controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/admin.categories.controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { 
+    getCategories, 
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    showCategoryEditForm 
+} = require('../models/categories.model');
+const { refererRedirect } = require('../helpers/redirect.helper.js');
+/**
+ * @module controller/admin-categories
+ */
+
+ /**
+ * Denne funktion retunerer create-category.ejs
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.showCategoryCreateForm = async function(req, res, next) {
+    try {
+        res.render('admin/create-category', { 'title': 'Opret boligtype', 'content': 'Opret boligtype i formen'});
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke indlæse siden");
+    }
+}
+
+/**
+ * Denne funktion opretter med POST en category
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.createCategory = async function(req, res, next) {
+    if(req.fields.name == "") {
+        req.session.flash = { 
+            nameError:"Navn skal udfyldes",
+            name: req.fields.name,
+            description: req.fields.description       
+        };
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    if(req.fields.description == "") {
+        req.session.flash = { 
+            descriptionError:"beskrivelse skal udfyldes",
+            name: req.fields.name,
+            description: req.fields.description       
+        };
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    try {
+        const category = await createCategory({
+            name: req.fields.name, 
+            description: req.fields.description
+        });
+        req.session.flash = { 
+            success:"Kategorien er oprettet"
+        };
+        res.redirect('/admin/categories');
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke oprette boligtype");
+    }
+}
+
+/**
+ * Denne funktion retunerer categories.ejs med data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.getCategories = async function(req, res, next) {
+    try {
+        const [rows] = await getCategories();
+        res.render('admin/categories', { 'title': 'Boligtyper', 'content': 'en liste over boligtyper', 'categories': rows });
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke hente boligtype");
+    }
+}
+
+/**
+ * Denne funktion retunerer edit-category.ejs med data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.showCategoryForm = async function(req, res, next) {
+    try {
+        const [rows] = await showCategoryEditForm(req.params.id);
+        res.render('admin/edit-category', { 'title': 'Redigér', 'content': 'Redigér boligtypen', 'category': rows[0] });
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke finde boligtype");
+    }
+}
+
+/**
+ * Denne funktion opdaterer category data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.editCategory = async function(req, res, next) {
+    if(req.fields.name == "") {
+        req.session.flash = { 
+            nameError:"Navn skal udfyldes",
+            name: req.fields.name,
+            description: req.fields.description       
+        };
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    if(req.fields.description == "") {
+        req.session.flash = { 
+            descriptionError:"beskrivelse skal udfyldes",
+            name: req.fields.name,
+            description: req.fields.description       
+        };
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    try {
+        const user = await updateCategory({
+            id: req.params.id, 
+            name: req.fields.name, 
+            description: req.fields.description
+        });
+        req.session.flash = { 
+            success:"Kategorien er opdateret"
+        };
+        res.redirect('/admin/editCategory/' + req.params.id);
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke opdatere boligtype");
+    }
+}
+
+/**
+ * Denne funktion sletter category data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.deleteCategory = async function(req, res, next) {
+    try {
+        await deleteCategory(req.params.id);
+        req.session.flash = { 
+            success:"Kategorien er slettet"
+        };
+        res.redirect('/admin/categories');
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke slette boligtype");
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controller_admin-articles.html">controller/admin-articles</a></li><li><a href="module-controller_admin-categories.html">controller/admin-categories</a></li><li><a href="module-controller_admin-contact.html">controller/admin-contact</a></li><li><a href="module-controller_admin-images.html">controller/admin-images</a></li><li><a href="module-controller_admin-main.html">controller/admin-main</a></li><li><a href="module-controller_admin-residentials.html">controller/admin-residentials</a></li><li><a href="module-controller_admin-roles.html">controller/admin-roles</a></li><li><a href="module-controller_site-articles.html">controller/site-articles</a></li><li><a href="module-controller_site-contact.html">controller/site-contact</a></li><li><a href="module-controller_site-home.html">controller/site-home</a></li><li><a href="module-controller_site-login.html">controller/site-login</a></li><li><a href="module-controller_site-residentials.html">controller/site-residentials</a></li><li><a href="module-controller_users.html">controller/users</a></li><li><a href="module-Helper_redirects.html">Helper/redirects</a></li><li><a href="module-Model_articles.html">Model/articles</a></li><li><a href="module-Model_categories.html">Model/categories</a></li><li><a href="module-Model_contact.html">Model/contact</a></li><li><a href="module-Model_globals.html">Model/globals</a></li><li><a href="module-Model_images.html">Model/images</a></li><li><a href="module-Model_profiles.html">Model/profiles</a></li><li><a href="module-Model_residentials.html">Model/residentials</a></li><li><a href="module-Model_roles.html">Model/roles</a></li><li><a href="module-Model_users.html">Model/users</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 26 2019 13:18:10 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

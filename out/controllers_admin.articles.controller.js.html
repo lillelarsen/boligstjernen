@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/admin.articles.controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/admin.articles.controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { 
+    createArticle, 
+    deleteArticle, 
+    showArticle, 
+    showArticleEditForm,
+    updateArticle,
+    countArticles 
+} = require('../models/articles.model');
+const { refererRedirect } = require('../helpers/redirect.helper.js');
+
+/**
+ * @module controller/admin-articles
+ */
+
+ /**
+ * Denne funktion retunerer create-article.ejs
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.showArticleCreateForm = async function(req, res, next) {
+    try {
+        res.render('admin/create-article', { 'title': 'Opret nyhed', 'content': 'Opret nyhed i formen' });
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke indlæse siden");
+    }
+}
+
+/**
+ * Denne funktion opretter med POST en nyhed
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.createArticle = async function(req, res, next) {
+    if(req.fields.name == "") {
+        req.session.flash = { 
+            nameError:"Navn skal udfyldes",
+            name: req.fields.name,
+            content: req.fields.content  
+        };
+
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    if(req.fields.content == "") {
+        req.session.flash = { 
+            contentError:"Indhold skal udfyldes",
+            name: req.fields.name,
+            content: req.fields.content  
+        };
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    try {       
+        const article = await createArticle({
+            name: req.fields.name, 
+            content: req.fields.content, 
+            user: req.session.user
+        });
+        req.session.flash = { 
+            success:"Artiklen er oprettet"
+        };
+        res.redirect('/admin/articles');
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke oprette nyhed");
+    }
+}
+
+/**
+ * Denne funktion retunerer News.ejs med data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.getArticles = async function(req, res, next) {
+    let values = req.query;
+       
+    // bestem hvor mange elementer der skal vises pr side
+    let limit = Number(values.items) || 10;
+    // vi går som standard ud fra at det er den første side der skal vises
+    console.log(limit);
+    
+    let current_page = 1;
+    // tjek at page findes i querystring og at det er et tal
+    if (values.page != undefined) {
+        if (parseInt(values.page) &lt; 1) {
+            res.redirect('/admin/articles');
+            return;
+        }
+        if (parseInt(values.page) >= 1) {
+            current_page = parseInt(values.page);
+        }
+    }
+    // find ud af hvor mange produkter der er i databasen
+    let [result] = await countArticles();
+    let total_items = result[0].total_items;
+
+    // beregn hvor mange produkter der skal springes over 
+    // for at vise den pågældende side
+    let offset = (current_page - 1) * limit;
+
+    // beregn hvor mange sider der er i alt, 
+    // baseret på antal elementer og elementer pr side
+    let total_pages = Math.ceil(total_items / limit);
+
+    // hvis "offset" er større end totalle antal items, så indlæses den sidste side
+    if (offset > total_items) {
+        res.redirect(`/admin/articles?page=${total_pages}&amp;items=${limit}`);
+        return;
+    }
+
+    try {
+        const [rows, fields] = await showArticle({
+            articlelimit: limit, 
+            articleoffset: offset
+        });        
+        res.render('admin/articles', { 
+            'title': 'Nyheder', 
+            'content': 'en liste over nyheder', 
+            'articles': rows,
+            'total_pages': total_pages,
+            'current_page': current_page,
+            'itemsPerPage': limit
+        });
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke hente nyheder");
+    }
+}
+
+/**
+ * Denne funktion retunerer edit-article.ejs med data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.showArticleForm = async function(req, res, next) {
+    try {
+        const [userRows] = await showArticleEditForm(req.params.id);
+        res.render('admin/edit-article', { 'title': 'Redigér', 'content': 'Redigér nyheden', 'article': userRows[0]  });
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke finde nyhed");
+    }
+}
+
+/**
+ * Denne funktion opdaterer News data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.editArticle = async function(req, res, next) {
+    if(req.fields.name == "") {
+        req.session.flash = { 
+            nameError:"Navn skal udfyldes",
+            name: req.fields.name,
+            content: req.fields.content  
+        };
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    if(req.fields.content == "") {
+        req.session.flash = { 
+            contentError:"Indhold skal udfyldes",
+            name: req.fields.name,
+            content: req.fields.content  
+        };
+        res.redirect(refererRedirect(req.headers.referer));
+        return;
+    } 
+    try {
+        
+        const news = await updateArticle({
+            id: req.params.id, 
+            name: req.fields.name, 
+            content: req.fields.content , 
+            user: req.fields.user
+        });
+        req.session.flash = { 
+            success:"Artiklen er opdateret"
+        };
+        res.redirect('/admin/editArticle/' + req.params.id);
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke opdatere nyhed");
+    }
+}
+
+/**
+ * Denne funktion sletter News data
+ * @param {Object} req - Request-objektet returnerer værdier fra clientside
+ * @param {Function} res - Response-funktionen bruges til at give svar tilbage
+ * @param {Function} next - Next-funktionen kan bruges til videresendelse 
+ */
+exports.deleteArticle = async function(req, res, next) {
+    try {
+        const [deleted] = await deleteArticle(req.params.id);
+        req.session.flash = { 
+            success:"Artiklen er slettet"
+        };
+        res.redirect('/admin/articles');
+    } catch (error) {
+        console.log(error);
+        res.send("Kan ikke slette nyhed");
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controller_admin-articles.html">controller/admin-articles</a></li><li><a href="module-controller_admin-categories.html">controller/admin-categories</a></li><li><a href="module-controller_admin-contact.html">controller/admin-contact</a></li><li><a href="module-controller_admin-images.html">controller/admin-images</a></li><li><a href="module-controller_admin-main.html">controller/admin-main</a></li><li><a href="module-controller_admin-residentials.html">controller/admin-residentials</a></li><li><a href="module-controller_admin-roles.html">controller/admin-roles</a></li><li><a href="module-controller_site-articles.html">controller/site-articles</a></li><li><a href="module-controller_site-contact.html">controller/site-contact</a></li><li><a href="module-controller_site-home.html">controller/site-home</a></li><li><a href="module-controller_site-login.html">controller/site-login</a></li><li><a href="module-controller_site-residentials.html">controller/site-residentials</a></li><li><a href="module-controller_users.html">controller/users</a></li><li><a href="module-Helper_redirects.html">Helper/redirects</a></li><li><a href="module-Model_articles.html">Model/articles</a></li><li><a href="module-Model_categories.html">Model/categories</a></li><li><a href="module-Model_contact.html">Model/contact</a></li><li><a href="module-Model_globals.html">Model/globals</a></li><li><a href="module-Model_images.html">Model/images</a></li><li><a href="module-Model_profiles.html">Model/profiles</a></li><li><a href="module-Model_residentials.html">Model/residentials</a></li><li><a href="module-Model_roles.html">Model/roles</a></li><li><a href="module-Model_users.html">Model/users</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 26 2019 13:18:10 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

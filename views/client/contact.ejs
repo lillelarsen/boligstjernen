@@ -1,0 +1,72 @@
+<% include ./partials/head.ejs %>
+<% include ./partials/header.ejs %>
+<% include ./partials/navigation.ejs %>
+<main class="main contact">
+        <div class="contact-info">
+            <h3 class="contact-head">Kontaktoplysninger</h3>
+            <p class="contact-info-field"><%= site.sitename %></p>
+            <p class="contact-info-field"><%= site.street %> <%= site.street_number %></p>
+            <p class="contact-info-field"><%= site.postal_code %> <%= site.city %></p>
+
+            <p>Telefon: <span><%= site.phone %></span></p>
+            <p>Telefax: <span><%= site.telefax %></span></p>
+            <p>Email: <span><%= site.email %></span></p>
+            <h3 class="contact-head">Åbningstider</h3>
+            <% hours.forEach((hour) => { %>
+                <% if(hour.closed == 1) { %>
+                    <p class="opening-hours"><%= hour.weekday %> <span class="hours">Lukket</span></p>
+                <% } else { %>
+                    <p class="opening-hours"><%= hour.weekday %> <span class="hours"><%= moment(hour.opens, 'HH:mm:ss').format('HH:mm'); %> - <%= moment(hour.closing, 'HH:mm:ss').format('HH:mm'); %></span></p>
+                <% } %>
+            <% }); %>
+        </div>
+        <div class="contact-form-container">
+            <span id="success" style="color: green;">
+                <%= (messages && messages.success) ? messages.success : "" %>
+            </span>
+            <form class="contact-form" method="POST">
+                <fieldset>
+                    <label class="contact-label required" for="name">Navn</label>
+                    <input class="contact-input" type="text" name="name" id="name" value="<%= (messages && messages.name) ? messages.name : "" %>">
+                    <span id="usernameError" class="errorMessage" style="color: red;">
+                        <%= (messages && messages.nameError) ? messages.nameError : "" %>
+                    </span>
+                </fieldset>
+                <fieldset>
+                    <label class="contact-label" for="adress">Adresse</label>
+                    <input class="contact-input" type="text" name="adress" id="adress">
+                </fieldset>
+                <fieldset>
+                    <label class="contact-label" for="phone">Telefon</label>
+                    <input class="contact-input" type="text" name="phone" id="phone">
+                </fieldset>
+                <fieldset>
+                    <label class="contact-label required" for="email">Email</label>
+                    <input class="contact-input" type="text" name="email" id="email" value="<%= (messages && messages.email) ? messages.email : "" %>">
+                    <span id="emailError" style="color: red;" class="errorMessage">
+                        <%= (messages && messages.emailError) ? messages.emailError : "" %>
+                    </span>
+                </fieldset>
+                <fieldset>
+                    <label class="contact-label required" for="message">Kommentar</label>
+                    <textarea class="contact-textarea" name="message" rows="8" id="message"><%= (messages && messages.message) ? messages.message : "" %></textarea>
+                    <span id="messageError" style="color: red;" class="errorMessage">
+                        <%= (messages && messages.messageError) ? messages.messageError : "" %>
+                    </span>
+                </fieldset>
+
+                </fieldset>            
+                <button type="submit">Send</button>
+            </form>  
+        </div>
+</main>
+<script src="/scripts/validator.js"></script>
+<script>
+    // New products validation
+    jsb.validationEmpty('.contact-form', '#name', 'Udfyld venligst navn!', '#usernameError');
+    jsb.validationEmpty('.contact-form', '#email', 'Udfyld venligst email!', '#emailError');
+    jsb.validationEmpty('.contact-form', '#message', 'Skriv venligst en besked!', '#messageError');
+</script>
+<% include ./partials/aside.ejs %> 
+<% include ./partials/footer.ejs %>
+<% include ./partials/after-footer.ejs %>
